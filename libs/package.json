@@ -1,0 +1,25 @@
+{
+    "name" : "cludo",
+    "version" : "0.0.1-genesis",
+    "description" : "An Enterprise Service Bus implementation",
+    "keywords" : 
+        [
+            "esb", "enterprise service bus"
+        ],
+    "author" : 
+        {
+            "name" : "Coen Bijlsma",
+            "email" : "cludo@coenbijlsma.nl"
+        },
+    "issues" : 
+        {
+            "url" : "https://github.com/coenbijlsma/cludo/issues",
+            "email" : "cludo-issues@coenbijlsma.nl"
+        },
+    "license" : "LGPL-3.0",
+    "dependencies" : {
+        "mongodb" : ">= 2.0.x",
+        "jsdoc" : ">= 3.3.x"
+    }
+}
+
