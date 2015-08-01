@@ -1,25 +1,24 @@
-var events = require('events');
 var util = require('util');
+var events = require('events');
 
-/**
- * Creates a new Service
- * @class
- */
+var cutil = mod('domain/core/Util');
+
+
 function Service(name) {
     events.EventEmitter.call(this);
 
+    cutil.typecheck(name, 'name', 'string');
     this.name = name;
 }
 util.inherits(Service, events.EventEmitter);
 
-/**
- * 
- */
-Service.prototype.send = function(message, receiver, cb) {
-    
+
+Service.prototype.start = function() {
+    this.emit('error', new Error('Not implemented'));
 };
 
-Service.prototype.receive = function(message, sender, cb) {
+Service.prototype.stop = function(force) {
+    this.emit('error', new Error('Not implemented'));
 };
 
 module.exports = Service;
