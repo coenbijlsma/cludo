@@ -1,3 +1,6 @@
+var events = require('events');
+var util = require('util');
+
 var cutil = mod('domain/core/Util');
 
 /**
@@ -5,6 +8,8 @@ var cutil = mod('domain/core/Util');
  * @class
  */
 function Queue() {
+    events.EventEmitter.call(this);
+
     var self = this;
     self.items = [];
 
@@ -12,6 +17,7 @@ function Queue() {
         get: function() { return self.items.length; }
     });
 }
+util.inherits(Queue, events.EventEmitter);
 
 /**
  * Adds the supplied item to the end of the queue. 
@@ -24,7 +30,11 @@ function Queue() {
 Queue.prototype.enqueue = function(item) {
     cutil.typecheck(item, 'item', 'object');
 
-    return this.items.length !== this.items.push(item);
+    var success = this.items.length !== this.items.push(item);
+
+    if (success) { this.emit('item', item, this); }
+
+    return success;
 };
 
 /**

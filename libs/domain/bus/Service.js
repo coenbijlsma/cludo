@@ -14,11 +14,19 @@ util.inherits(Service, events.EventEmitter);
 
 
 Service.prototype.start = function() {
-    this.emit('error', new Error('Not implemented'));
+
+    /**
+     * @event Service#started
+     */
+    this.emit('started');
 };
 
 Service.prototype.stop = function(force) {
-    this.emit('error', new Error('Not implemented'));
+
+    /**
+     * @event Service#stopped
+     */
+    this.emit('stopped', force);
 };
 
 module.exports = Service;

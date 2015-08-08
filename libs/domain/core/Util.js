@@ -35,6 +35,10 @@ function isFloat(candidate) {
 };
 exports.isFloat = isFloat;
 
+function isFunction(candidate) {
+    return typeof candidate === 'function';
+};
+
 function isA(instance, type) {
     return instance instanceof type;
 };

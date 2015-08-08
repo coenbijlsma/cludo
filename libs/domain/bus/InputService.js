@@ -1,6 +1,6 @@
 var util = require('util');
 
-var Service = mod('core/bus/Service');
+var Service = mod('domain/bus/Service');
 
 function InputService(name) {
     Service.call(this, name);
