@@ -3,10 +3,6 @@ var util = require('util');
 
 var BusError = mod('domain/core/BusError');
 var QueuePool = mod('domain/messaging/QueuePool');
-var ServiceWrapper = mod('domain/bus/InputService');
-var InputService = mod('domain/bus/InputService');
-var OutputService = mod('domain/bus/OutputService');
-var ProcessingService = mod('domain/bus/ProcessingService');
 var cutil = mod('domain/core/Util');
 
 /**
@@ -22,49 +18,75 @@ util.inherits(Bus, events.EventEmitter);
  * Configures this Bus instance.
  * @fires Bus#configured
  * @param {QueuePool} queuePool - The queue pool to use for sending messages between services.
- * @param {InputService[]} [inputServices] - The input services for this Bus instance.
- * @param {OutputService[]} [outputServices] - The output services for this Bus instance.
- * @param {ProcessingService[]} [processingServices] - The processing services for this Bus 
+ * @param {Service[]} services - The input, output and processing services for this Bus instance.
  * instance.
  */
-Bus.prototype.configure = function(queuePool, inputServices, outputServices, processingServices) {
+Bus.prototype.configure = function(queuePool, services) {
     cutil.typecheck(queuePool, 'queuePool', QueuePool);
-    cutil.typecheck(inputServices, 'inputServices', Array, true);
-    cutil.typecheck(outputServices, 'outputServices', Array, true);
-    cutil.typecheck(processingServices, 'processingServices', Array, true);
+    cutil.typecheck(services, 'services', Array, true);
 
     var self = this;
 
     self.queuePool = queuePool;
-    self.inputServices = [];
-    self.outputServices = [];
-    self.processingServices = [];
+    self.services = [];
 
-    for (i = 0; i < queuePool.pool.length; i++) {
-        queuePool.pool[i].on('item', function(item, queue) {
-            // TODO figure out who is responsible for
-            // processing new items in a queue.
-        });
+    // Configure handling of messages sent by services
+    self.queuePool.on('message', function(event) {
+        var envelope = event.item;
+
+        if (self.services[envelope.target] === undefined) {
+            self.emit('error', new Error('Target [' + envelope.target + '] for message [' 
+                + envelope.id + '] not defined'));
+        } else {
+            self.services[envelope.target].instance.receive(envelope.message); 
+        }
+    });
+
+    if (services) {
+        for ( i = 0; i < services.length, i++) {
+            service = services[i];
+            cutil.typecheck(service, 'service', Service);
+
+            // Add the service to this Bus instance
+            self.services[service.name] = {
+                instance: service,
+                state: 'IDLE',
+            };
+            
+            function updateServiceState(name, state) {
+                var previousState = self.services[name].instance.state;
+                self.services[name].instance.state = state;
+
+                /**
+                 * @event Bus#service.state.change
+                 * @type {object}
+                 * @property {string} name - The name of the service that changed state
+                 * @property {string} previousState - The previous state of the service
+                 * @property {string} currentState - The current state of the service
+                 */
+                self.emit('service-state-change', {
+                    name: name,
+                    previousState: previousState,
+                    currentState: state
+                });
+
+            }
+
+            // Set up listeners for service state changes
+            service.on('start', function() {
+                updateServiceState(service.name, 'STARTED');
+            });
+            service.on('stop', function() {
+                updateServiceState(service.name, 'STOPPED');
+            });
+            service.on('error', function() {
+                updateServiceState(service.name, 'ERROR');
+            });
+        }
     }
 
-    var addServices = function(services, type, receiver) {
-        for ( i = 0; i < services.length; i++) {
-            service = services[i];
-            cutil.typecheck(service, type.name + '[' + i + ']', type);
-            receiver[service.name] = {
-                service: service,
-                state: 'IDLE'
-            };
-        }
-    };
-
-    if (inputServices) { addServices(inputServices, InputService, self.inputServices); }
-    if (outputServices) { addServices(outputServices, OutputService, self.outputServices); }
-    if (processingServices { addServices(processingServices, ProcessingService, 
-        self.processingServices);
-
     /**
-     * @event Bus#started
+     * @event Bus#configured
      */
     this.emit('configured');
 };
@@ -78,40 +100,46 @@ Bus.prototype.configure = function(queuePool, inputServices, outputServices, pro
 Bus.prototype.start = function() {
     var self = this;
 
-    var handler = function(service, index, subject) {
-        var serviceErrorHandler = function(err) {
-            service.state = 'ERROR';
-            // TODO Log this
-        };
-        try {
-            service.on('error', serviceErrorHandler);
-            service.on('started', function() { service.state = 'STARTED'; });
-            service.on('stopped', function() { service.state = 'STOPPED'; });
-            service.on('message', function(envelope) { 
-                self.queuePool.get().enqueue(envelope);
-            });
-
-            service.start();
-
-        } catch(ex) {
-            serviceErrorHandler(ex);
-        }
-    };
-
     process.nextTick(function() {
-        self.outputServices.forEach(handler);
-        self.processingServices.forEach(handler);
-        self.inputServices.forEach(handler);
+        self.services.forEach(function(service, index, serviceArray) {
+            var serviceErrorHandler = function(err) {
+                // TODO Log this
+            };
+
+            try {
+                service.on('error', serviceErrorHandler);
+                service.on('send', function(envelope) {
+                    self.queuePool.get().enqueue(envelope);
+                });
+
+                service.start();
+            } catch(ex) {
+                serviceErrorHandler(ex);
+            }
+        });
 
         /**
          * @event Bus#started
          */
-        this.emit('started');
+        self.emit('started');
     });
 };
 
+/**
+ * Stops this Bus and all services that it contains.
+ *
+ * @fires Bus#stopped
+ */
 Bus.prototype.stop = function() {
-    // TODO
+    var self this;
+
+    process.nextTick(function() {
+        self.services.forEach(function(service, index, serviceArray) {
+            service.stop();
+        });
+
+        self.emit('stopped');
+    });
 };
 
 module.exports = Bus;

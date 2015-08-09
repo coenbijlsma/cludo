@@ -25,16 +25,39 @@ util.inherits(Queue, events.EventEmitter);
  * add it to the queue.
  *
  * @param {object} item
- * @returns {boolean} Whether the queue contents have been changed.
+ * @fires Queue#enqueue
+ * @fires Queue#error
  */
 Queue.prototype.enqueue = function(item) {
     cutil.typecheck(item, 'item', 'object');
 
-    var success = this.items.length !== this.items.push(item);
+    var self = this;
+    process.nextTick(function() {
+        var success = this.items.length !== this.items.push(item);
+        if (success) {
 
-    if (success) { this.emit('item', item, this); }
+            /**
+             * @event Queue#enqueue
+             * @type {object}
+             * @param {object} item - The item that was added to the queue
+             * @param {Queue} queue - The queue the item was added to
+             */
+            self.emit('enqueue', {
+                item: item,
+                queue: self
+            }); 
+        } else {
 
-    return success;
+            /**
+             * @event Queue#error
+             * @type {object}
+             */
+            self.emit('error', {
+                error: 'Could not enqueue item in queue',
+                item: item
+            });
+        }
+    });
 };
 
 /**

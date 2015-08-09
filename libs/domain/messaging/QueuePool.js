@@ -1,3 +1,6 @@
+var util = require('util');
+var events = require('events');
+
 var cutil = mod('domain/core/Util');
 var Queue = mod('domain/messaging/Queue');
 
@@ -10,13 +13,19 @@ var Queue = mod('domain/messaging/Queue');
  */
 function QueuePool(size) {
     cutil.typecheck(size, 'size', 'int');
+    events.EventEmitter.call(this);
 
-    this.pool = [];
-    for (i=0; i < size; i++) {
+    var self = this;
+    self.pool = [];
+    for (i = 0; i < size; i++) {
         var queue = new Queue();
-        this.pool.push(queue);
+        queue.on('enqueue', function(event) {
+            self.emit('message', event);
+        });
+        self.pool.push(queue);
     }
 }
+util.inherits(QueuePool, events.EventEmitter);
 
 /**
  * Returns the next suitable queue to be used. The returned queue

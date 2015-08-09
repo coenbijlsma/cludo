@@ -1,4 +1,5 @@
 var util = require('util');
+var uuid = require('node-uuid');
 
 function isBoolean(candidate) {
     return typeof candidate === 'boolean';
@@ -136,3 +137,6 @@ exports.typecheck = function(variable, name, type, nullable) {
     }
 };
 
+exports.uuid = function() {
+    return uuid.v4();
+};

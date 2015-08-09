@@ -19,7 +19,8 @@
     "license" : "LGPL-3.0",
     "dependencies" : {
         "mongodb" : ">= 2.0.x",
-        "jsdoc" : ">= 3.3.x"
+        "jsdoc" : ">= 3.3.x",
+        "node-uuid" : ">= 1.4.x"
     }
 }
 
