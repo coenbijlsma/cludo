@@ -3,6 +3,7 @@ var util = require('util');
 
 var BusError = mod('domain/core/BusError');
 var QueuePool = mod('domain/messaging/QueuePool');
+var Service = mod('domain/bus/Service');
 var cutil = mod('domain/core/Util');
 
 /**
@@ -43,7 +44,7 @@ Bus.prototype.configure = function(queuePool, services) {
     });
 
     if (services) {
-        for ( i = 0; i < services.length, i++) {
+        for ( i = 0; i < services.length; i++) {
             service = services[i];
             cutil.typecheck(service, 'service', Service);
 
@@ -99,30 +100,35 @@ Bus.prototype.configure = function(queuePool, services) {
  */
 Bus.prototype.start = function() {
     var self = this;
+        
+    for (var key in self.services) {
+        if (self.services.hasOwnProperty(key)) {
+            var service = self.services[key];
+            console.log('trying to start service ' + service.instance.name);
 
-    process.nextTick(function() {
-        self.services.forEach(function(service, index, serviceArray) {
             var serviceErrorHandler = function(err) {
                 // TODO Log this
+                throw err;
             };
 
             try {
-                service.on('error', serviceErrorHandler);
-                service.on('send', function(envelope) {
+                service.instance.on('error', serviceErrorHandler);
+                service.instance.on('send', function(envelope) {
                     self.queuePool.get().enqueue(envelope);
                 });
 
-                service.start();
+                console.log('starting service ' + service.instance.name);
+                service.instance.start();
             } catch(ex) {
                 serviceErrorHandler(ex);
             }
-        });
+        }
+    }
 
-        /**
-         * @event Bus#started
-         */
-        self.emit('started');
-    });
+    /**
+     * @event Bus#started
+     */
+    self.emit('started');
 };
 
 /**
@@ -131,7 +137,7 @@ Bus.prototype.start = function() {
  * @fires Bus#stopped
  */
 Bus.prototype.stop = function() {
-    var self this;
+    var self = this;
 
     process.nextTick(function() {
         self.services.forEach(function(service, index, serviceArray) {

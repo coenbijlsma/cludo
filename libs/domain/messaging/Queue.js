@@ -33,7 +33,7 @@ Queue.prototype.enqueue = function(item) {
 
     var self = this;
     process.nextTick(function() {
-        var success = this.items.length !== this.items.push(item);
+        var success = self.items.length !== self.items.push(item);
         if (success) {
 
             /**

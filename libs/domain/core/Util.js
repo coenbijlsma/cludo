@@ -72,7 +72,7 @@ exports.typecheck = function(variable, name, type, nullable) {
     ];
 
     // First check our own parameters.
-    if (!isString(type)) {
+    if (!isString(name)) {
         throw new Error('The name parameter must be of type string');
     } else if (!isString(type) && !isFunction(type) ) {
         throw new Error('The type parameter must be of type string or function, but got ' 
