@@ -1,3 +1,5 @@
+"use strict";
+
 var events = require('events');
 var util = require('util');
 
@@ -10,11 +12,13 @@ var cutil = mod('domain/core/Util');
 function Queue() {
     events.EventEmitter.call(this);
 
-    var self = this;
-    self.items = [];
+    this.items = [];
 
-    Object.defineProperty(self, 'length', {
-        get: function() { return self.items.length; }
+    var self = this;
+    Object.defineProperty(this, 'length', {
+        get: function() {
+            return self.items.length;
+        }
     });
 }
 util.inherits(Queue, events.EventEmitter);
@@ -31,9 +35,8 @@ util.inherits(Queue, events.EventEmitter);
 Queue.prototype.enqueue = function(item) {
     cutil.typecheck(item, 'item', 'object');
 
-    var self = this;
-    process.nextTick(function() {
-        var success = self.items.length !== self.items.push(item);
+    process.nextTick( () => {
+        var success = this.items.length !== this.items.push(item);
         if (success) {
 
             /**
@@ -42,9 +45,9 @@ Queue.prototype.enqueue = function(item) {
              * @param {object} item - The item that was added to the queue
              * @param {Queue} queue - The queue the item was added to
              */
-            self.emit('enqueue', {
+            this.emit('enqueue', {
                 item: item,
-                queue: self
+                queue: this
             }); 
         } else {
 
@@ -52,7 +55,7 @@ Queue.prototype.enqueue = function(item) {
              * @event Queue#error
              * @type {object}
              */
-            self.emit('error', {
+            this.emit('error', {
                 error: 'Could not enqueue item in queue',
                 item: item
             });
@@ -83,7 +86,7 @@ Queue.prototype.peek = function() {
  * @returns {object|null}
  */
 Queue.prototype.dequeue = function() {
-    return  this.items.pop();
+    return this.items.pop();
 };
 
 module.exports = Queue;

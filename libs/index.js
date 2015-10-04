@@ -1,8 +1,8 @@
+"use strict";
+
 var fs = require('fs');
 
-var mod = function(file) {
-    return require('./' + file);
-};
+var mod = (file) => require('./' + file);
 
 function bootstrap() {
     if(typeof global.mod === 'undefined') {
@@ -13,9 +13,9 @@ function bootstrap() {
 function test() {
     var Bus = mod('domain/bus/Bus');
     var QueuePool = mod('domain/messaging/QueuePool');
-    var MyInputService = mod('domain/services/MyInputService');
-    var MyOutputService = mod('domain/services/MyOutputService');
-    var MyProcessingService = mod('domain/services/MyProcessingService');
+    var MyInputService = mod('domain/servicing/MyInputService');
+    var MyOutputService = mod('domain/servicing/MyOutputService');
+    var MyProcessingService = mod('domain/servicing/MyProcessingService');
 
     var queuePool = new QueuePool(5);
     var services = [
@@ -23,7 +23,7 @@ function test() {
         new MyOutputService('my.output.service'),
         new MyInputService('my.input.service')
     ];
-    for (i = 0; i < services.length; i++) {
+    for (let i = 0; i < services.length; i++) {
         services[i].on('start', function() {
             console.log('Service started!');
         });

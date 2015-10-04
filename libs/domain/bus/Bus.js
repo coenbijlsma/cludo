@@ -1,3 +1,5 @@
+"use strict";
+
 var events = require('events');
 var util = require('util');
 
@@ -26,37 +28,35 @@ Bus.prototype.configure = function(queuePool, services) {
     cutil.typecheck(queuePool, 'queuePool', QueuePool);
     cutil.typecheck(services, 'services', Array, true);
 
-    var self = this;
-
-    self.queuePool = queuePool;
-    self.services = [];
+    this.queuePool = queuePool;
+    this.services = [];
 
     // Configure handling of messages sent by services
-    self.queuePool.on('message', function(event) {
+    this.queuePool.on('message', (event) => {
         var envelope = event.item;
 
-        if (self.services[envelope.target] === undefined) {
-            self.emit('error', new Error('Target [' + envelope.target + '] for message [' 
+        if (this.services[envelope.target] === undefined) {
+            this.emit('error', new Error('Target [' + envelope.target + '] for message [' 
                 + envelope.id + '] not defined'));
         } else {
-            self.services[envelope.target].instance.receive(envelope.message); 
+            this.services[envelope.target].instance.receive(envelope.message); 
         }
     });
 
     if (services) {
-        for ( i = 0; i < services.length; i++) {
-            service = services[i];
+        for (let i = 0; i < services.length; i++) {
+            let service = services[i];
             cutil.typecheck(service, 'service', Service);
 
             // Add the service to this Bus instance
-            self.services[service.name] = {
+            this.services[service.name] = {
                 instance: service,
                 state: 'IDLE',
             };
             
-            function updateServiceState(name, state) {
-                var previousState = self.services[name].instance.state;
-                self.services[name].instance.state = state;
+            let updateServiceState = (name, state) => {
+                var previousState = this.services[name].instance.state;
+                this.services[name].instance.state = state;
 
                 /**
                  * @event Bus#service.state.change
@@ -65,7 +65,7 @@ Bus.prototype.configure = function(queuePool, services) {
                  * @property {string} previousState - The previous state of the service
                  * @property {string} currentState - The current state of the service
                  */
-                self.emit('service-state-change', {
+                this.emit('service-state-change', {
                     name: name,
                     previousState: previousState,
                     currentState: state
@@ -74,13 +74,13 @@ Bus.prototype.configure = function(queuePool, services) {
             }
 
             // Set up listeners for service state changes
-            service.on('start', function() {
+            service.on('start', () => {
                 updateServiceState(service.name, 'STARTED');
             });
-            service.on('stop', function() {
+            service.on('stop', () => {
                 updateServiceState(service.name, 'STOPPED');
             });
-            service.on('error', function() {
+            service.on('error', () => {
                 updateServiceState(service.name, 'ERROR');
             });
         }
@@ -99,22 +99,20 @@ Bus.prototype.configure = function(queuePool, services) {
  *
  */
 Bus.prototype.start = function() {
-    var self = this;
-        
-    for (var key in self.services) {
-        if (self.services.hasOwnProperty(key)) {
-            var service = self.services[key];
+    for (var key in this.services) {
+        if (this.services.hasOwnProperty(key)) {
+            var service = this.services[key];
             console.log('trying to start service ' + service.instance.name);
 
-            var serviceErrorHandler = function(err) {
+            let serviceErrorHandler = (err) => {
                 // TODO Log this
                 throw err;
             };
 
             try {
                 service.instance.on('error', serviceErrorHandler);
-                service.instance.on('send', function(envelope) {
-                    self.queuePool.get().enqueue(envelope);
+                service.instance.on('send', (envelope) => {
+                    this.queuePool.get().enqueue(envelope);
                 });
 
                 console.log('starting service ' + service.instance.name);
@@ -128,7 +126,7 @@ Bus.prototype.start = function() {
     /**
      * @event Bus#started
      */
-    self.emit('started');
+    this.emit('started');
 };
 
 /**
@@ -137,14 +135,12 @@ Bus.prototype.start = function() {
  * @fires Bus#stopped
  */
 Bus.prototype.stop = function() {
-    var self = this;
-
-    process.nextTick(function() {
-        self.services.forEach(function(service, index, serviceArray) {
+    process.nextTick(() => {
+        this.services.forEach((service, index, serviceArray) => {
             service.stop();
         });
 
-        self.emit('stopped');
+        this.emit('stopped');
     });
 };
 

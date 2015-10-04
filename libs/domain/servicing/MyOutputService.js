@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 
 var Service = mod('domain/bus/Service');
@@ -5,8 +7,7 @@ var Service = mod('domain/bus/Service');
 function MyOutputService(name) {
     Service.call(this, name);
 
-    var self = this;
-    self.on('receive', function(message) {
+    this.on('receive', (message) => {
         console.log('Received message: ');
         console.log(message);
     });

@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 var uuid = require('node-uuid');
 
@@ -60,7 +62,7 @@ exports.isArray = util.isArray;
  * nullable. If true, it also allows for undefined values.
  */
 exports.typecheck = function(variable, name, type, nullable) {
-    allowedTypes = [
+    let allowedTypes = [
         'boolean',
         'number',
         'string',
@@ -137,6 +139,7 @@ exports.typecheck = function(variable, name, type, nullable) {
     }
 };
 
-exports.uuid = function() {
+exports.uuid = () => {
     return uuid.v4();
 };
+

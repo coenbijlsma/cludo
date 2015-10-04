@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 var events = require('events');
 
@@ -15,14 +17,13 @@ function QueuePool(size) {
     cutil.typecheck(size, 'size', 'int');
     events.EventEmitter.call(this);
 
-    var self = this;
-    self.pool = [];
-    for (i = 0; i < size; i++) {
+    this.pool = [];
+    for (let i = 0; i < size; i++) {
         var queue = new Queue();
-        queue.on('enqueue', function(event) {
-            self.emit('message', event);
+        queue.on('enqueue', (event) => {
+            this.emit('message', event);
         });
-        self.pool.push(queue);
+        this.pool.push(queue);
     }
 }
 util.inherits(QueuePool, events.EventEmitter);
@@ -36,7 +37,7 @@ util.inherits(QueuePool, events.EventEmitter);
  */
 QueuePool.prototype.get = function() {
     
-    var sorted = this.pool.sort(function(left, right) {
+    var sorted = this.pool.sort( (left, right) => {
        llength = left.length;
        rlength = right.length;
 
