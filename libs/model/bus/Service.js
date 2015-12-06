@@ -3,7 +3,7 @@
 var util = require('util');
 var events = require('events');
 
-var cutil = mod('domain/core/Util');
+var cutil = mod('model/core/Util');
 
 
 function Service(name) {

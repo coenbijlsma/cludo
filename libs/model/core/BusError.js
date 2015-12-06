@@ -2,7 +2,7 @@
 
 var util = require('util');
 
-var cutil = mod('domain/core/Util');
+var cutil = mod('model/core/Util');
 
 function BusError(message, cause) {
     cutil.typecheck(cause, 'cause', Error, true);

@@ -3,7 +3,7 @@
 var events = require('events');
 var util = require('util');
 
-var cutil = mod('domain/core/Util');
+var cutil = mod('model/core/Util');
 
 /**
  * Creates a new Queue.
