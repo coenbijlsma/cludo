@@ -3,10 +3,10 @@
 var events = require('events');
 var util = require('util');
 
-var BusError = mod('model/core/BusError');
-var QueuePool = mod('model/messaging/QueuePool');
-var Service = mod('model/bus/Service');
-var cutil = mod('model/core/Util');
+var BusError = mod('library/core/BusError');
+var QueuePool = mod('library/messaging/QueuePool');
+var Service = mod('library/bus/Service');
+var cutil = mod('library/core/Util');
 
 /**
  * Constructs a new Bus

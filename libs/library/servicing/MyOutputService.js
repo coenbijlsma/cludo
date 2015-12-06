@@ -2,7 +2,7 @@
 
 var util = require('util');
 
-var Service = mod('model/bus/Service');
+var Service = mod('library/bus/Service');
 
 function MyOutputService(name) {
     Service.call(this, name);

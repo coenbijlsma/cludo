@@ -11,11 +11,11 @@ function bootstrap() {
 }
 
 function test() {
-    var Bus = mod('model/bus/Bus');
-    var QueuePool = mod('model/messaging/QueuePool');
-    var MyInputService = mod('model/servicing/MyInputService');
-    var MyOutputService = mod('model/servicing/MyOutputService');
-    var MyProcessingService = mod('model/servicing/MyProcessingService');
+    var Bus = mod('library/bus/Bus');
+    var QueuePool = mod('library/messaging/QueuePool');
+    var MyInputService = mod('library/servicing/MyInputService');
+    var MyOutputService = mod('library/servicing/MyOutputService');
+    var MyProcessingService = mod('library/servicing/MyProcessingService');
 
     var queuePool = new QueuePool(5);
     var services = [
