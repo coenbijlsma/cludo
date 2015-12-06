@@ -3,10 +3,10 @@
 var events = require('events');
 var util = require('util');
 
-var BusError = mod('library/core/BusError');
-var QueuePool = mod('library/messaging/QueuePool');
-var Service = mod('library/bus/Service');
-var cutil = mod('library/core/Util');
+var BusError = mod('domain/core/BusError');
+var QueuePool = mod('domain/messaging/QueuePool');
+var Service = mod('domain/bus/Service');
+var cutil = mod('domain/core/Util');
 
 /**
  * Constructs a new Bus
@@ -33,7 +33,7 @@ Bus.prototype.configure = function(queuePool, services) {
 
     // Configure handling of messages sent by services
     this.queuePool.on('message', (event) => {
-        var envelope = event.item;
+        let envelope = event.item;
 
         if (this.services[envelope.target] === undefined) {
             this.emit('error', new Error('Target [' + envelope.target + '] for message [' 

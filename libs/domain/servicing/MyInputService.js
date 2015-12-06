@@ -3,7 +3,7 @@
 var util = require('util');
 var fs = require('fs');
 
-var Service = mod('library/bus/Service');
+var Service = mod('domain/bus/Service');
 
 function MyInputService(name) {
     Service.call(this, name);

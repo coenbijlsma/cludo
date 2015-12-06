@@ -3,8 +3,8 @@
 var util = require('util');
 var events = require('events');
 
-var cutil = mod('library/core/Util');
-var Queue = mod('library/messaging/Queue');
+var cutil = mod('domain/core/Util');
+var Queue = mod('domain/messaging/Queue');
 
 /**
  * Creates a new QueuePool with size queues.

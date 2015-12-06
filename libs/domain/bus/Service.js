@@ -3,7 +3,7 @@
 var util = require('util');
 var events = require('events');
 
-var cutil = mod('library/core/Util');
+var cutil = mod('domain/core/Util');
 
 
 function Service(name) {
@@ -64,7 +64,7 @@ Service.prototype.start = function() {
 };
 
 /**
- * Emits the stop event, su sob classes and other interested
+ * Emits the stop event, so sub classes and other interested
  * parties can act on it.
  *
  * @fires Service#stop
