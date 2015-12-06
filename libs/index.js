@@ -37,9 +37,7 @@ function test() {
         console.log('Bus started!');
     });
     bus.configure(queuePool, services);
-    console.log(bus);
     bus.start();
-
 }
 
 bootstrap();
