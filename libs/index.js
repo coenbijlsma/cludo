@@ -11,7 +11,7 @@ function bootstrap() {
 }
 
 function test() {
-    var Bus = mod('domain/bus/Bus');
+    var Bus = mod('application/routing/Bus');
     var QueuePool = mod('domain/messaging/QueuePool');
     var MyInputService = mod('domain/servicing/MyInputService');
     var MyOutputService = mod('domain/servicing/MyOutputService');

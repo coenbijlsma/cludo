@@ -5,7 +5,7 @@ var util = require('util');
 
 var BusError = mod('domain/core/BusError');
 var QueuePool = mod('domain/messaging/QueuePool');
-var Service = mod('domain/bus/Service');
+var Service = mod('domain/servicing/Service');
 var cutil = mod('domain/core/Util');
 
 /**
