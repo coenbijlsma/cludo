@@ -38,8 +38,8 @@ util.inherits(QueuePool, events.EventEmitter);
 QueuePool.prototype.get = function() {
     
     var sorted = this.pool.sort( (left, right) => {
-       llength = left.length;
-       rlength = right.length;
+       let llength = left.length;
+       let rlength = right.length;
 
        if (llength > rlength) {
            return 1;

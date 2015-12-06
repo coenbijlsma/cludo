@@ -44,4 +44,4 @@ function test() {
 
 bootstrap();
 
-module.exports = test;
+test();
