@@ -1,30 +1,28 @@
 {
-    "name" : "cludo",
-    "version" : "0.0.1-genesis",
-    "description" : "An Enterprise Service Bus implementation",
-    "keywords" : 
-        [
-            "esb", "enterprise service bus"
-        ],
-    "author" : 
-        {
-            "name" : "Coen Bijlsma",
-            "email" : "cludo@coenbijlsma.nl"
-        },
-    "issues" : 
-        {
-            "url" : "https://github.com/coenbijlsma/cludo/issues",
-            "email" : "cludo-issues@coenbijlsma.nl"
-        },
-    "license" : "LGPL-3.0",
-    "dependencies" : {
-        "mongodb" : ">= 2.0.x",
-        "jsdoc" : ">= 3.3.x",
-        "node-uuid" : ">= 1.4.x"
-    },
-    "engines" : {
-        "node" : ">=4.1.x",
-        "npm" : ">=2.14.x"
-    }
+  "name": "cludo",
+  "version": "0.0.1-genesis",
+  "description": "An Enterprise Service Bus implementation",
+  "keywords": [
+    "esb",
+    "enterprise service bus"
+  ],
+  "author": {
+    "name": "Coen Bijlsma",
+    "email": "cludo@coenbijlsma.nl"
+  },
+  "issues": {
+    "url": "https://github.com/coenbijlsma/cludo/issues",
+    "email": "cludo-issues@coenbijlsma.nl"
+  },
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "jsdoc": ">= 3.3.x",
+    "kerberos": "0.0.17",
+    "mongodb": ">= 2.0.x",
+    "node-uuid": ">= 1.4.x"
+  },
+  "engines": {
+    "node": ">=4.1.x",
+    "npm": ">=2.14.x"
+  }
 }
-
